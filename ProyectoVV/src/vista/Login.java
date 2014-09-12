@@ -13,6 +13,7 @@ public class Login extends JFrame implements ActionListener{
 	private JTextField usuarioCampo;
 	private JPasswordField passwordCampo;
 	private JButton entrarBoton;
+	private JComboBox tipoUsuario;
 	
 	public Login (){
 		super("Login");
@@ -20,6 +21,7 @@ public class Login extends JFrame implements ActionListener{
 		Container contenedor = this.getContentPane();
 		contenedor.setLayout(new FlowLayout());
 		
+		//this.tipoUsuario      = ne
 		this.usuarioEtiqueta  = new JLabel   ("Usuario");
 		this.passwordEtiqueta = new JLabel("contraseña");
 		this.usuarioCampo     = new JTextField      (20);

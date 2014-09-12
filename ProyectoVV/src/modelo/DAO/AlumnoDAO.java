@@ -3,7 +3,7 @@ package modelo.DAO;
 public class AlumnoDAO implements DAO{
 
 	@Override
-	public void insertar(Object a) {
+	public void  insertar(Object a) {
 		// TODO Auto-generated method stub
 		
 	}
