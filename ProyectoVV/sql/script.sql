@@ -32,8 +32,8 @@ CREATE TABLE grupos
   jefeGrupo    int,
   enAutorizado int,
   PRIMARY KEY (idGrupo),
-  FOREIGN KEY (orientador)   REFERENCES maestros(idMaestros ) ON DELETE CASCADE,
-  FOREIGN KEY (enAutorizado) REFERENCES encuestas(idEncuesta) ON DELETE CASCADE
+  FOREIGN KEY (orientador)   REFERENCES maestros(idMaestros ) ON DELETE SET NULL,
+  FOREIGN KEY (enAutorizado) REFERENCES encuestas(idEncuesta) ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
 CREATE TABLE alumnos
@@ -42,13 +42,14 @@ CREATE TABLE alumnos
   nombre          varchar(40) not null,
   apellidoPaterno varchar(20) not null,
   apellidoMaterno varchar(20) not null,
-  capacitacion    varchar(10),
+  capacitacion    int,
   email           varchar(20),
   telefono        int         not null,
   promedio        real        not null,
   grupo           int         not null,
   PRIMARY KEY  (matricula),
-  FOREIGN KEY (grupo) REFERENCES grupos(idGrupo)  ON DELETE CASCADE
+  FOREIGN KEY (grupo)        REFERENCES grupos(idGrupo)  ON DELETE CASCADE
+  FOREIGN KEY (capacitacion) REFERENCES grupos(idGrupo)  ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE respuestas
