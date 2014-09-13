@@ -1,6 +1,6 @@
 package modelo.VO;
 
-public class EncuestasVO {
+public class EncuestaVO {
 	private Integer idEncuesta;
 	private String  descripcion;
 	

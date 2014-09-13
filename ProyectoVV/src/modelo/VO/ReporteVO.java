@@ -1,6 +1,6 @@
 package modelo.VO;
 
-public class ReportesVO extends DocumentoVO{
+public class ReporteVO extends DocumentoVO{
 	private String gravedad;
 	private String sancion;
 	

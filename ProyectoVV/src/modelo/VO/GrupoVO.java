@@ -1,6 +1,6 @@
 package modelo.VO;
 
-public class GruposVO {
+public class GrupoVO {
 	
 	private Integer idGrupo;
 	private String  turno;

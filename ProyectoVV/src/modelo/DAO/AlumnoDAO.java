@@ -26,4 +26,10 @@ public class AlumnoDAO implements DAO{
 		return new Object[1];
 	}
 
+	@Override
+	public Object find(Object a) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

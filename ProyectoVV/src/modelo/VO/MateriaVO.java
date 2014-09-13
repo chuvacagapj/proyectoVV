@@ -1,6 +1,6 @@
 package modelo.VO;
 
-public class MateriasVO {
+public class MateriaVO {
 	private Integer idMaterias;
 	private String  nombre;
 	private Integer maxFaltas;
