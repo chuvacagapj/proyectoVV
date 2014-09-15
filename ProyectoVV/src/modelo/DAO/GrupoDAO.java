@@ -9,7 +9,7 @@ public class GrupoDAO {
 	public int[] getGrupos(){
 		int[] grupos = null;
 		int n = 0;
-		String query = "SELECT idGrupo FROM grupos;";
+		String query = "SELECT idGrupo FROM grupos ORDER BY idGrupo;";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
 		ResultSet registros = null;
 		
