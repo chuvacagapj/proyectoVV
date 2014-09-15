@@ -6,10 +6,9 @@ import modelo.VO.AlumnoVO;
 
 public class AlumnoDAO {
 
-	public boolean insertar(Object a) {
+	public boolean insertar(AlumnoVO alumno) {
 		String    columnas = "INSERT INTO alumnos(";
 		String    valores  = "Values (";
-		AlumnoVO  alumno   = (AlumnoVO)a;
 		Statement consulta = Conexion.getConexion().hacerConsulta();
 		
 		if(alumno.getMatricula() != null){
@@ -63,9 +62,8 @@ public class AlumnoDAO {
 		return true;
 	}
 
-	public boolean update(Object a) {
+	public boolean update(AlumnoVO alumno) {
 		String    query    = "UPDATE alumnos SET";
-		AlumnoVO  alumno   = (AlumnoVO)a;
 		Statement consulta = Conexion.getConexion().hacerConsulta();
 		
 		if(alumno.getNombre() != null){
@@ -105,8 +103,7 @@ public class AlumnoDAO {
 		return true;
 	}
 
-	public boolean eliminar(Object a) {
-		Integer clave = (Integer)a;
+	public boolean eliminar(Integer clave) {
 		Statement consulta = Conexion.getConexion().hacerConsulta();
 		try{
 			consulta.executeUpdate("DELETE FROM alumnos WHERE matricula = " + clave.toString() +";");
@@ -116,7 +113,32 @@ public class AlumnoDAO {
 		return true;
 	}
 
-
+	public AlumnoVO[] noEncuestados(Integer claveEncuesta){
+		String query = "SELECT * FROM alumnos WHERE matricula NOT IN (SELECT matricula FROM respuestas WHERE encuesta = "+ claveEncuesta + " GRUOP BY matricula HAVING count(*) = 3) ;";
+		Statement consulta = Conexion.getConexion().hacerConsulta();
+		AlumnoVO[] alumnos = null;
+		try{
+			alumnos = recuperacion(consulta.executeQuery(query));
+			
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		return alumnos;
+	} 
+	
+	public AlumnoVO[] ordenAsignacion(Integer semestre){
+		AlumnoVO[] alumnos = null;
+		String query = "SELECT * FROM alumnos WHERE CONVERT(grupo AS char) like '" +semestre+   "%' ORDER BY promedio;";
+		Statement consulta = Conexion.getConexion().hacerConsulta();
+		try{
+			alumnos = this.recuperacion(consulta.executeQuery(query));
+		}catch(Exception e){
+			System.out.println(e);
+			return null;
+		}
+		return alumnos;
+	}
+	
 	public AlumnoVO[] consultar(AlumnoVO alumno) {
 		String query = "SELECT * FROM alumnos WHERE ";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
@@ -132,7 +154,7 @@ public class AlumnoDAO {
 			query += " apellidoMaterno LIKE '" + alumno.getApellidoMaterno() + "%' AND";
 		}
 		if(alumno.getGrupo() != null){
-			query += " grupo = "+ alumno.getGrupo().toString() + " AND";
+			query += " (grupo = "+ alumno.getGrupo().toString() + " OR capasitacion ="+ alumno.getGrupo().toString() + " AND";
 		}
 		query = query.substring(0, query.length() -5);
 		query += ";";
