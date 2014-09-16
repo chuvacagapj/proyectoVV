@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 
 import modelo.DAO.AlumnoDAO;
 import modelo.DAO.GrupoDAO;
+import modelo.VO.AlumnoVO;
 
 public class Controlador {
 	//vistas
@@ -15,15 +16,16 @@ public class Controlador {
 	private AlumnoDAO alumnos;
 	private GrupoDAO grupos;
 	
-	public String [] getGrupos(){
-		String [] grupo = null;
-		int[] entrada = grupos.getGrupos();
-		grupo = new String[entrada.length];
-		for(int i = 0; i < entrada.length; i++){
-			grupo[i] = Integer.toString(entrada[i]);
+	public Integer [] getGrupos(){
+		return grupos.getGrupos();
+	}
+	
+	public AlumnoVO[] getAlumnos(AlumnoVO a){
+		try{
+			return alumnos.consultar(a);
+		}catch(Exception e){
+			return new AlumnoVO[1];
 		}
-		
-		return grupo;
 	}
 
 	public JDialog getBuscarAlumnos() {

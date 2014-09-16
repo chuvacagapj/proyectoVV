@@ -32,23 +32,23 @@ CREATE TABLE grupos
   jefeGrupo    int,
   enAutorizado int,
   PRIMARY KEY (idGrupo),
-  FOREIGN KEY (orientador)   REFERENCES maestros(idMaestros ) ON DELETE SET NULL,
-  FOREIGN KEY (enAutorizado) REFERENCES encuestas(idEncuesta) ON DELETE SET NULL
+  FOREIGN KEY (orientador)   REFERENCES maestros(idMaestros ) ON DELETE CASCADE,
+  FOREIGN KEY (enAutorizado) REFERENCES encuestas(idEncuesta) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE alumnos
 (
   matricula       int         not null AUTO_INCREMENT,
   nombre          varchar(40) not null,
-  apellidoPaterno varchar(20) not null,
-  apellidoMaterno varchar(20) not null,
+  apellidoPaterno varchar(20),
+  apellidoMaterno varchar(20),
   capacitacion    int,
   email           varchar(20),
-  telefono        int         not null,
+  telefono        int,
   promedio        real        not null,
   grupo           int         not null,
   PRIMARY KEY  (matricula),
-  FOREIGN KEY (grupo)        REFERENCES grupos(idGrupo)  ON DELETE CASCADE
+  FOREIGN KEY (grupo)        REFERENCES grupos(idGrupo)  ON DELETE CASCADE,
   FOREIGN KEY (capacitacion) REFERENCES grupos(idGrupo)  ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
@@ -181,3 +181,12 @@ INSERT INTO asignacion (maestro, materia, grupo) VALUES
 (1,1,203),
 (4,5,203),
 (7,11,203);
+
+INSERT INTO alumnos (matricula, nombre, apellidoPaterno, apellidoMaterno, promedio, grupo) VALUES
+(12030162, "Gabriela", "Bustamante", "Espinoza", 8.5, 201),
+(12030163, "Jorge",    "Orozco",     "Terrazas", 8.0, 202),
+(12030164, "Alan", "Garcia", "Pardo", 8.5, 203),
+(11030162, "Gerardo", "Bustamante", "Espinoza", 8.5, 401),
+(11030163, "Julio", "Bustamante", "Espinoza", 8.5, 402),
+(11030164, "Andres", "Bustamante", "Espinoza", 8.5, 403),
+(10030162, "Geronimo", "Bustamante", "Espinoza", 8.5, 601);

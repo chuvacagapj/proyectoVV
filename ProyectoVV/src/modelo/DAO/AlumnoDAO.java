@@ -116,7 +116,7 @@ public class AlumnoDAO {
 	public AlumnoVO[] noEncuestados(Integer claveEncuesta){
 		String query = "SELECT * FROM alumnos WHERE matricula NOT IN (SELECT matricula FROM respuestas WHERE encuesta = "+ claveEncuesta + " GRUOP BY matricula HAVING count(*) = 3) ;";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
-		AlumnoVO[] alumnos = null;
+		AlumnoVO[] alumnos = new AlumnoVO[1];
 		try{
 			alumnos = recuperacion(consulta.executeQuery(query));
 			
@@ -127,9 +127,10 @@ public class AlumnoDAO {
 	} 
 	
 	public AlumnoVO[] ordenAsignacion(Integer semestre){
-		AlumnoVO[] alumnos = null;
-		String query = "SELECT * FROM alumnos WHERE CONVERT(grupo AS char) like '" +semestre+   "%' ORDER BY promedio;";
+		AlumnoVO[] alumnos = new AlumnoVO[1];
+		String query = "SELECT * FROM alumnos WHERE CAST(grupo AS char) like '" +semestre+   "%' ORDER BY promedio;";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
+		System.out.print(consulta);
 		try{
 			alumnos = this.recuperacion(consulta.executeQuery(query));
 		}catch(Exception e){
@@ -142,7 +143,11 @@ public class AlumnoDAO {
 	public AlumnoVO[] consultar(AlumnoVO alumno) {
 		String query = "SELECT * FROM alumnos WHERE ";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
-		AlumnoVO[] a = null;
+		AlumnoVO[] a = new AlumnoVO[1];
+		
+		if(alumno.getMatricula() != null){
+			query += " CONVERT(matricula AS char) LIKE '" + alumno.getMatricula() + "%' AND";
+		}
 		
 		if(alumno.getNombre() != null){
 			query += " nombre LIKE '" + alumno.getNombre() + "%' AND";
@@ -176,11 +181,13 @@ public class AlumnoDAO {
 		registros = info.getRow();
 		columnas  = metadata.getColumnCount();
 		info.beforeFirst();
+		System.out.print(info);
 		
 		AlumnoVO[] a = new AlumnoVO[registros];
 		
 		for(int i=1; i <= columnas;i++){
-			switch(metadata.getColumnClassName(i)){
+			System.out.print(metadata.getColumnName(i));
+			switch(metadata.getColumnName(i)){
 				case "matricula":
 					for(int j=1; j<=registros; j++){
 						info.next();
@@ -247,6 +254,7 @@ public class AlumnoDAO {
 				default:
 			}
 		}
+		System.out.print(a[1].getNombre());
 		return a;
 	}
 

@@ -23,7 +23,42 @@ public class AlumnoVO {
     return nombre;
   }
   
-  public void setNombre(String nombre) {
+  @Override
+public String toString() {
+	return "" + matricula;
+}
+
+@Override
+public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((matricula == null) ? 0 : matricula.hashCode());
+	return result;
+}
+
+@Override
+public boolean equals(Object obj) {
+	if (this == obj) {
+		return true;
+	}
+	if (obj == null) {
+		return false;
+	}
+	if (!(obj instanceof AlumnoVO)) {
+		return false;
+	}
+	AlumnoVO other = (AlumnoVO) obj;
+	if (matricula == null) {
+		if (other.matricula != null) {
+			return false;
+		}
+	} else if (!matricula.equals(other.matricula)) {
+		return false;
+	}
+	return true;
+}
+
+public void setNombre(String nombre) {
     this.nombre = nombre;
   }
   
