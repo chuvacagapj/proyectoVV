@@ -1,26 +1,18 @@
 package vista;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.*;
+import java.awt.event.*;
+
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
-import modelo.Conexion;
-import modelo.DAO.GrupoDAO;
+import modelo.*;
+import modelo.DAO.*;
 import modelo.VO.AlumnoVO;
-import controlador.BloqueadorTablas;
-import controlador.Controlador;
-import controlador.Limitador;
-import controlador.Restriccion;
+import controlador.*;
 
-public class BuscadorAlumnos extends JDialog implements ActionListener, KeyListener{
+public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarCampos{
 	private JLabel etiquetaMatricula, etiquetaApellidoPaterno, etiquetaApellidoMaterno, etiquetaGrupo, etiquetaLista, etiquetaAgregados, etiquetaNombre;
 	private JTextField cajaMatricula, cajaApellidoPaterno, cajaApellidoMaterno, cajaNombre;
 	private JComboBox listaGrupo;
@@ -39,7 +31,6 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, KeyListe
 		this.getContentPane().setLayout (new GridBagLayout());
 		String [] titulo = {"matricula", "Apellidos", "Nombre", "Grupo"};
 		this.consulta = new AlumnoVO();
-		System.out.print(this.consulta);
 		
 		this.modeloAgregados = new BloqueadorTablas(null, titulo);
 		this.modeloLista     = new BloqueadorTablas(null, titulo);
@@ -57,15 +48,15 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, KeyListe
 		this.cajaMatricula       = new JTextField();
 		this.cajaNombre          = new JTextField();
 		
-		this.cajaApellidoMaterno.addKeyListener(this); //Agregando el escuchador
-		this.cajaApellidoPaterno.addKeyListener(this);
-		this.cajaMatricula.addKeyListener      (this);
-		this.cajaNombre.addKeyListener         (this);
+		this.cajaApellidoMaterno.getDocument().addDocumentListener(new MyDocumentListener(this.cajaApellidoMaterno, this));
+		this.cajaApellidoPaterno.getDocument().addDocumentListener(new MyDocumentListener(this.cajaApellidoPaterno, this));
+		this.cajaMatricula.getDocument().addDocumentListener(new MyDocumentListener      (this.cajaMatricula,       this));
+		this.cajaNombre.getDocument().addDocumentListener(new MyDocumentListener         (this.cajaNombre,          this));
 		
-		this.cajaApellidoMaterno.setDocument(new Limitador(this.cajaApellidoMaterno, Restriccion.ALFABETICO, 20)); //configurando restriccion campos
-		this.cajaApellidoPaterno.setDocument(new Limitador(this.cajaApellidoPaterno, Restriccion.ALFABETICO, 20));
-		this.cajaMatricula.setDocument      (new Limitador(this.cajaMatricula,       Restriccion.NUMERICO,   8 ));
-		this.cajaNombre.setDocument         (new Limitador(this.cajaNombre,          Restriccion.ALFABETICO, 40));
+		this.cajaApellidoMaterno.setDocument(new Limitador(this.cajaApellidoMaterno, Restriccion.ALFABETICO, 20, this)); //configurando restriccion campos
+		this.cajaApellidoPaterno.setDocument(new Limitador(this.cajaApellidoPaterno, Restriccion.ALFABETICO, 20, this));
+		this.cajaMatricula.setDocument      (new Limitador(this.cajaMatricula,       Restriccion.NUMERICO,   8,  this));
+		this.cajaNombre.setDocument         (new Limitador(this.cajaNombre,          Restriccion.ALFABETICO, 40, this));
 		
 		JComboBox jComboBox = new JComboBox(control.getGrupos());
 		this.listaGrupo = jComboBox;
@@ -245,7 +236,9 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, KeyListe
 			Conexion.setInfo("root", "control", "chocolate4194", "localhost");
 			Controlador control = new Controlador();
 			control.setGrupos(new GrupoDAO());
+			control.setAlumnos(new AlumnoDAO());
 			BuscadorAlumnos vista = new BuscadorAlumnos(null, true, control);
+			vista.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			vista.setVisible(true);
 			
 		}catch(Exception e){
@@ -260,65 +253,60 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, KeyListe
 		else if(e.getSource() == this.botonBorrarTodo){}
 		else if(e.getSource() == this.botonSeleccion){}
 		else if(e.getSource() == this.botonSeleccionTodo){}
+		else if(e.getSource() == this.listaGrupo){
+			this.consulta.setGrupo((Integer)this.listaGrupo.getSelectedItem());
+			this.respuesta = this.control.getAlumnos(this.consulta);
+			this.actualizar(this.tablaLista);
+		}
+		else {}
+	}
+	
+	private void actualizar (JTable a){
+		if(a == this.tablaLista && this.respuesta != null){
+			for(int i = this.modeloLista.getRowCount() -1; i >= 0; i--){
+				this.modeloLista.removeRow(i);
+			}
+			for(AlumnoVO i: this.respuesta){
+				if(i != null){
+					Object fila [] = {i.getMatricula(), (i.getApellidoPaterno() + " " + i.getApellidoMaterno()), i.getNombre(), i.getGrupo()};
+					this.modeloLista.addRow(fila);
+				}
+			}
+		}
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) {
-		if(e.getComponent() == this.cajaApellidoMaterno){
+	public void campoCambio(JTextField e) {
+		if(e == this.cajaApellidoMaterno){
 			if(this.cajaApellidoMaterno.getText().equals("")) this.consulta.setApellidoMaterno(null);
 			else this.consulta.setApellidoMaterno(this.cajaApellidoMaterno.getText());
 			this.respuesta = control.getAlumnos(this.consulta);
 			this.actualizar(this.tablaLista);
 			this.modeloLista.fireTableDataChanged();
 		}
-		else if(e.getComponent() == this.cajaApellidoPaterno){
+		else if(e == this.cajaApellidoPaterno){
 			if(this.cajaApellidoPaterno.getText().equals("")) this.consulta.setApellidoPaterno(null);
 			else this.consulta.setApellidoPaterno(this.cajaApellidoPaterno.getText());
 			this.respuesta = control.getAlumnos(this.consulta);
 			this.actualizar(this.tablaLista);
 			this.modeloLista.fireTableDataChanged();
 		}
-		else if(e.getComponent() == this.cajaMatricula){
+		else if(e == this.cajaMatricula){
 			if(this.cajaMatricula.getText().equals("")) this.consulta.setMatricula(null);
 			else this.consulta.setMatricula(new Integer(this.cajaMatricula.getText()));
 			this.respuesta = control.getAlumnos(this.consulta);
 			this.actualizar(this.tablaLista);
 			this.modeloLista.fireTableDataChanged();
 		}
-		else if(e.getComponent() == this.cajaNombre){
+		else if(e == this.cajaNombre){
 			if(this.cajaNombre.getText().equals("")) this.consulta.setNombre(null);
 			else this.consulta.setNombre(this.cajaNombre.getText());
 			this.respuesta = control.getAlumnos(this.consulta);
 			this.actualizar(this.tablaLista);
 			this.modeloLista.fireTableDataChanged();
 		}
-		
-		
-	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private void actualizar (JTable a){
-		if(a == this.tablaLista && this.respuesta != null){
-			if (this.modeloLista.getRowCount() > 0)
-				this.modeloLista.fireTableRowsDeleted(0, this.modeloLista.getRowCount()-1);
-			for(AlumnoVO i: this.respuesta){
-				if(i != null){
-					Object fila [] = {i, i.getNombre(), (i.getApellidoPaterno() + " " + i.getApellidoMaterno()), i.getGrupo()};
-					this.modeloLista.addRow(fila);
-				}
-			}
-		}
 	}
 	
 

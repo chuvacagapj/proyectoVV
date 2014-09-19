@@ -24,7 +24,8 @@ public class GrupoDAO {
 				registros.next();
 				grupos[i] = new Integer(registros.getInt(1));
 			}
-			
+			registros.close();
+			consulta.close();
 		}catch(Exception e){
 			System.out.println(e);
 		}

@@ -1,22 +1,18 @@
 package controlador;
 
-import modelo.Conexion;
-import modelo.DAO.AlumnoDAO;
-import modelo.VO.AlumnoVO;
+import modelo.*;
+import modelo.DAO.*;
+import modelo.VO.*;
+import vista.*;
+import javax.swing.*;
 
 public class Iniciadora {
-	
-    
 
 	public static void main(String[] args) {
-		Conexion.setInfo("root", "control", "chocolate4194", "127.0.0.1");
-		AlumnoDAO a = new AlumnoDAO();
-		System.out.print(Conexion.getConexion());
-		try{
-		AlumnoVO [] alumnos = a.ordenAsignacion(2);
-		for(AlumnoVO i: alumnos){
-			System.out.print(i);
-		}}catch(Exception e){}
+		Principal vista = new Principal();
+		vista.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		vista.setSize(500, 500);
+		vista.setVisible(true);
 	}
 	
 	public static void fiinal(){

@@ -1,6 +1,7 @@
 package controlador;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.AttributeSet;
@@ -10,11 +11,13 @@ public class Limitador extends PlainDocument {
 	private JTextField  campo;
 	private Restriccion restriccion;
 	private int numeroMaximoCaracteres;
+	private EscudarCampos escuchador;
 	
-	public Limitador(JTextField a, Restriccion r, int max){
+	public Limitador(JTextField a, Restriccion r, int max, EscudarCampos listener){
 		this.campo = a;
 		this.restriccion = r;
 		this.numeroMaximoCaracteres = max;
+		this.escuchador = listener;
 	}
 	
 	public void insertString(int arg0, String arg1, AttributeSet arg2) throws BadLocationException 
@@ -31,6 +34,13 @@ public class Limitador extends PlainDocument {
         if ((campo.getText().length()+arg1.length())>this.numeroMaximoCaracteres) 
             return; 
         super.insertString(arg0, arg1, arg2);
-    } 
+        this.escuchador.campoCambio(campo);
+    }
+	
+	protected void removeUpdate(AbstractDocument.DefaultDocumentEvent chng){
+		super.removeUpdate(chng);
+		this.escuchador.campoCambio(campo);
+	}
+
 
 }

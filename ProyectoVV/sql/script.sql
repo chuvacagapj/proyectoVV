@@ -1,6 +1,8 @@
 DROP DATABASE   control;
 
-CREATE DATABASE control;
+CREATE DATABASE control
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
 
 USE control;
 

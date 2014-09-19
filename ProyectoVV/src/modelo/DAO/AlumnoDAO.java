@@ -1,6 +1,7 @@
 package modelo.DAO;
 
 import java.sql.*;
+
 import modelo.Conexion;
 import modelo.VO.AlumnoVO;
 
@@ -133,6 +134,8 @@ public class AlumnoDAO {
 		System.out.print(consulta);
 		try{
 			alumnos = this.recuperacion(consulta.executeQuery(query));
+		}catch(SQLException e){
+			System.out.println(e.getLocalizedMessage());
 		}catch(Exception e){
 			System.out.println(e);
 			return null;
@@ -141,31 +144,36 @@ public class AlumnoDAO {
 	}
 	
 	public AlumnoVO[] consultar(AlumnoVO alumno) {
-		String query = "SELECT * FROM alumnos WHERE ";
+		String query = "SELECT * FROM alumnos \n WHERE ";
 		Statement consulta = Conexion.getConexion().hacerConsulta();
 		AlumnoVO[] a = new AlumnoVO[1];
 		
 		if(alumno.getMatricula() != null){
-			query += " CONVERT(matricula AS char) LIKE '" + alumno.getMatricula() + "%' AND";
+			query += " CAST(matricula AS char) LIKE '" + alumno.getMatricula() + "%' AND";
 		}
 		
 		if(alumno.getNombre() != null){
-			query += " nombre LIKE '" + alumno.getNombre() + "%' AND";
+			query += "\n nombre LIKE '" + alumno.getNombre() + "%' AND";
 		}
 		if(alumno.getApellidoPaterno() != null){
-			query += " apellidoPaterno LIKE '" + alumno.getApellidoPaterno() + "%' AND";
+			query += "\n apellidoPaterno LIKE '" + alumno.getApellidoPaterno() + "%' AND";
 		}
 		if(alumno.getApellidoMaterno() != null){
-			query += " apellidoMaterno LIKE '" + alumno.getApellidoMaterno() + "%' AND";
+			query += "\n apellidoMaterno LIKE '" + alumno.getApellidoMaterno() + "%' AND";
 		}
 		if(alumno.getGrupo() != null){
-			query += " (grupo = "+ alumno.getGrupo().toString() + " OR capasitacion ="+ alumno.getGrupo().toString() + " AND";
+			query += "\n (grupo = "+ alumno.getGrupo().toString() + " OR capacitacion ="+ alumno.getGrupo().toString() + ") AND";
 		}
-		query = query.substring(0, query.length() -5);
+		query = query.substring(0, query.length() -3);
 		query += ";";
-		
+		System.out.println(query);
 		try{
 			a = this.recuperacion(consulta.executeQuery(query));
+		}catch(SQLException e){
+			System.out.println("error tipo sql");
+			System.out.println(e.getCause());
+		}catch (NullPointerException e){
+			System.out.println("DAO");
 		}catch(Exception e){
 			System.out.println(e);
 			return null;
@@ -174,88 +182,36 @@ public class AlumnoDAO {
 	}
 	
 	protected AlumnoVO[] recuperacion (ResultSet info) throws Exception{
-		int registros = 0, columnas = 0;
-		ResultSetMetaData metadata = null;
-		metadata = info.getMetaData();
+		int registros = 0, i;	
 		info.last();
 		registros = info.getRow();
-		columnas  = metadata.getColumnCount();
 		info.beforeFirst();
-		System.out.print(info);
 		
 		AlumnoVO[] a = new AlumnoVO[registros];
-		
-		for(int i=1; i <= columnas;i++){
-			System.out.print(metadata.getColumnName(i));
-			switch(metadata.getColumnName(i)){
-				case "matricula":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setMatricula(info.getInt(i));
-					}
-					info.beforeFirst();
-					break;
-				case "nombre":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setNombre(info.getNString(i));
-					}
-					info.beforeFirst();
-					break;
-				case "apellidoPaterno":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setApellidoPaterno(info.getNString(i));
-					}
-					info.beforeFirst();
-					break;
-				case "apellidoMaterno":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setApellidoMaterno(info.getNString(i));
-					}
-					info.beforeFirst();
-					break;
-				case "capacitacion":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setCapacitacion(info.getInt(i));
-					}
-					info.beforeFirst();
-					break;
-				case "email":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setEmail(info.getNString(i));
-					}
-					info.beforeFirst();
-					break;
-				case "telefono":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setTelefono(info.getInt(i));
-					}
-					info.beforeFirst();
-					break;
-				case "promedio":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setPromedio(info.getFloat(i));
-					}
-					info.beforeFirst();
-					break;
-				case "grupo":
-					for(int j=1; j<=registros; j++){
-						info.next();
-						a[j].setGrupo(info.getInt(i));
-					}
-					info.beforeFirst();
-					break;
-				default:
-			}
+		i=0;
+		while(info.next()){
+			a[i] = new AlumnoVO();
+			a[i].setMatricula(info.getInt("matricula"));
+			a[i].setNombre(info.getNString("nombre"));
+			a[i].setApellidoMaterno(info.getNString("apellidoMaterno"));
+			a[i].setApellidoPaterno(info.getNString("apellidoPaterno"));
+			a[i].setGrupo(info.getInt("grupo"));
+			a[i].setCapacitacion(info.getInt("capacitacion"));
+			a[i].setEmail(info.getNString("email"));
+			a[i].setTelefono(info.getInt("telefono"));
+			a[i].setPromedio(info.getFloat("promedio"));
+			i++;
 		}
-		System.out.print(a[1].getNombre());
 		return a;
 	}
 
+	public static void main(String[] args) {
+		AlumnoDAO alumno = new AlumnoDAO();
+		Conexion.setInfo("root", "control", "chocolate4194", "127.0.0.1");
+		AlumnoVO[]  alumnos = alumno.ordenAsignacion(2);
+		if (alumnos == null) System.out.println("no devuelve nada");
+		for(AlumnoVO a: alumnos){
+			System.out.println(a.getMatricula() + " " + a.getNombre() + " " +a.getApellidoPaterno() + " " + a.getApellidoMaterno() + " " + a.getPromedio());
+		}
+	}
 }

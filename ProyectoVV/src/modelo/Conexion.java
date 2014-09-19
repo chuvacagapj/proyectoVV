@@ -20,10 +20,10 @@ public class Conexion {
   }
   
   public static Conexion getConexion(){
-	  if ( mysqlconn == null){
-		  mysqlconn = new Conexion();
+	  if ( Conexion.mysqlconn == null){
+		  Conexion.mysqlconn = new Conexion();
 	  }
-	  return mysqlconn;
+	  return Conexion.mysqlconn;
   }
   
   public static void closeConexion(){
