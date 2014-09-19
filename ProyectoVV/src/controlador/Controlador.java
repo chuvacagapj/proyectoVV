@@ -35,6 +35,12 @@ public class Controlador {
 	public void setBuscarAlumnos(JDialog buscarAlumnos) {
 		this.buscarAlumnos = buscarAlumnos;
 	}
+	
+	public void RespuestaBucadorAlumnos(AlumnoVO[] alumnos){
+		for(AlumnoVO i: alumnos){
+			System.out.println(i.getMatricula());
+		}
+	} 
 
 	public JFrame getLogin() {
 		return Login;

@@ -34,13 +34,11 @@ public class Limitador extends PlainDocument {
         if ((campo.getText().length()+arg1.length())>this.numeroMaximoCaracteres) 
             return; 
         super.insertString(arg0, arg1, arg2);
-        this.escuchador.campoCambio(campo);
+        this.escuchador.campoCambio(campo);   
     }
 	
-	protected void removeUpdate(AbstractDocument.DefaultDocumentEvent chng){
-		super.removeUpdate(chng);
+	public void remove (int offs, int len) throws BadLocationException{
+		super.remove(offs, len);
 		this.escuchador.campoCambio(campo);
 	}
-
-
 }

@@ -2,7 +2,8 @@ package vista;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,14 +16,15 @@ import controlador.*;
 public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarCampos{
 	private JLabel etiquetaMatricula, etiquetaApellidoPaterno, etiquetaApellidoMaterno, etiquetaGrupo, etiquetaLista, etiquetaAgregados, etiquetaNombre;
 	private JTextField cajaMatricula, cajaApellidoPaterno, cajaApellidoMaterno, cajaNombre;
-	private JComboBox listaGrupo;
+	private JComboBox <Integer> listaGrupo;
 	private JButton botonSeleccion, botonSeleccionTodo, botonBorrar, botonBorrarTodo, botonAceptar;
 	private JTable tablaLista, tablaAgreagados;
 	private JScrollPane barraLista, barraAgregados;
 	private Controlador control;
 	private DefaultTableModel modeloLista, modeloAgregados;
 	private AlumnoVO   consulta;
-	private AlumnoVO[] respuesta, envio;
+	private AlumnoVO[] respuesta;
+	private ArrayList <AlumnoVO> envio;
 	
 	public BuscadorAlumnos(JFrame parent, boolean modal, Controlador control){
 		super(parent,"Buscar Alumnos!", modal); //configurar ventana
@@ -31,6 +33,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		this.getContentPane().setLayout (new GridBagLayout());
 		String [] titulo = {"matricula", "Apellidos", "Nombre", "Grupo"};
 		this.consulta = new AlumnoVO();
+		this.envio = new ArrayList <AlumnoVO> ();
 		
 		this.modeloAgregados = new BloqueadorTablas(null, titulo);
 		this.modeloLista     = new BloqueadorTablas(null, titulo);
@@ -48,18 +51,12 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		this.cajaMatricula       = new JTextField();
 		this.cajaNombre          = new JTextField();
 		
-		this.cajaApellidoMaterno.getDocument().addDocumentListener(new MyDocumentListener(this.cajaApellidoMaterno, this));
-		this.cajaApellidoPaterno.getDocument().addDocumentListener(new MyDocumentListener(this.cajaApellidoPaterno, this));
-		this.cajaMatricula.getDocument().addDocumentListener(new MyDocumentListener      (this.cajaMatricula,       this));
-		this.cajaNombre.getDocument().addDocumentListener(new MyDocumentListener         (this.cajaNombre,          this));
-		
 		this.cajaApellidoMaterno.setDocument(new Limitador(this.cajaApellidoMaterno, Restriccion.ALFABETICO, 20, this)); //configurando restriccion campos
 		this.cajaApellidoPaterno.setDocument(new Limitador(this.cajaApellidoPaterno, Restriccion.ALFABETICO, 20, this));
 		this.cajaMatricula.setDocument      (new Limitador(this.cajaMatricula,       Restriccion.NUMERICO,   8,  this));
 		this.cajaNombre.setDocument         (new Limitador(this.cajaNombre,          Restriccion.ALFABETICO, 40, this));
 		
-		JComboBox jComboBox = new JComboBox(control.getGrupos());
-		this.listaGrupo = jComboBox;
+		this.listaGrupo = new JComboBox <Integer> (control.getGrupos());
 		this.listaGrupo.addActionListener(this);
 		
 		this.botonAceptar       = new JButton("Aceptar"          );
@@ -156,7 +153,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.gridwidth  = 2;
 		posicion.gridheight = 1;
 		this.getContentPane().add(this.etiquetaLista, posicion);
-		
+ 
 		posicion.gridx      = 0;
 		posicion.gridy      = 6;
 		posicion.gridwidth  = 2;
@@ -248,11 +245,39 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == this.botonBorrar){}
-		else if(e.getSource() == this.botonAceptar){}
-		else if(e.getSource() == this.botonBorrarTodo){}
-		else if(e.getSource() == this.botonSeleccion){}
-		else if(e.getSource() == this.botonSeleccionTodo){}
+		if(e.getSource() == this.botonBorrar){
+			int [] elecciones = this.tablaAgreagados.getSelectedRows();
+			AlumnoVO [] borrados = new AlumnoVO[elecciones.length];
+			for(int i = 0; elecciones.length > i; i++){
+				borrados[i] = this.envio.get(elecciones[i]);
+			}
+			for(AlumnoVO j: borrados){
+				this.envio.remove(j);
+			}
+			this.actualizar(this.tablaAgreagados);
+		}
+		else if(e.getSource() == this.botonAceptar){
+			this.control.RespuestaBucadorAlumnos(this.envio.toArray(new AlumnoVO[0]));
+		}
+		else if(e.getSource() == this.botonBorrarTodo){
+			this.envio.clear();
+			this.actualizar(tablaAgreagados);
+		}
+		else if(e.getSource() == this.botonSeleccion){
+			int [] array = this.tablaLista.getSelectedRows();
+			for(int i: array){
+				if(!this.envio.contains(this.respuesta[i])){
+					this.envio.add(this.respuesta[i]);
+				}
+			}
+			this.actualizar(this.tablaAgreagados);
+		}
+		else if(e.getSource() == this.botonSeleccionTodo){
+			for(AlumnoVO a: this.respuesta){
+				if(!this.envio.contains(a)) this.envio.add(a);
+			}
+			this.actualizar(this.tablaAgreagados);
+		}
 		else if(e.getSource() == this.listaGrupo){
 			this.consulta.setGrupo((Integer)this.listaGrupo.getSelectedItem());
 			this.respuesta = this.control.getAlumnos(this.consulta);
@@ -270,6 +295,18 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 				if(i != null){
 					Object fila [] = {i.getMatricula(), (i.getApellidoPaterno() + " " + i.getApellidoMaterno()), i.getNombre(), i.getGrupo()};
 					this.modeloLista.addRow(fila);
+				}
+			}
+		}
+		else if(a == this.tablaAgreagados){
+			for(int i = this.modeloAgregados.getRowCount() -1; i >= 0; i--){
+				this.modeloAgregados.removeRow(i);
+			}
+			AlumnoVO[] alumnos = this.envio.toArray(new AlumnoVO[0]);
+			for(AlumnoVO i: alumnos){
+				if(i != null){
+					Object fila [] = {i.getMatricula(), (i.getApellidoPaterno() + " " + i.getApellidoMaterno()), i.getNombre(), i.getGrupo()};
+					this.modeloAgregados.addRow(fila);
 				}
 			}
 		}
@@ -308,6 +345,4 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 
 		
 	}
-	
-
 }
