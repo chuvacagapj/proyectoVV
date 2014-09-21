@@ -10,6 +10,7 @@ public class PanelConsultaFaltasAlumnos extends JPanel{
 	private JButton verMas;
 	private ConcentradoFaltasVO informacion;
 	private FaltaVO lista;
+	private JScrollPane barraTabla;
 	
 	public PanelConsultaFaltasAlumnos(ConcentradoFaltasVO informacion){
 		this.informacion = informacion;
