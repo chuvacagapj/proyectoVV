@@ -13,8 +13,21 @@ public class Controlador {
 	
 	//DAO
 	private AlumnoDAO alumnos;
-	private GrupoDAO grupos;
+	private GrupoDAO  grupos;
+	private FaltaDAO  faltas;
 	
+	public FaltaVO[] getFalta(FaltaVO entrada){
+		return this.faltas.consulta(entrada);
+	}
+	
+	public FaltaDAO getFaltas() {
+		return faltas;
+	}
+
+	public void setFaltas(FaltaDAO faltas) {
+		this.faltas = faltas;
+	}
+
 	public Integer [] getGrupos(){
 		return grupos.getGrupos();
 	}

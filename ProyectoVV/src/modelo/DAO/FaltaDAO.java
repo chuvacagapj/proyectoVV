@@ -1,7 +1,6 @@
 package modelo.DAO;
 
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Date;
 
 import modelo.Conexion;
@@ -69,19 +68,84 @@ public class FaltaDAO {
 	}
 	
 	public ConcentradoFaltasVO[] faltasPorMateria(Integer matricula){
-		String query = "SELECT t1.alumno as matricula, t2.nombre as materia, count(*) as faltas, count(t1.justificante) as justificadas, t2.maxFaltas as maximo_falas FROM faltas as t1, materias as t2 WHERE t1.materia = t2.idMateria AND t1.alumno = "+ matricula.toString() + " GROUP BY matricula, materia;";
+		String query = "SELECT t1.alumno as matricula, t2.nombre as materia, t2.idMateria as codigo, count(*) as faltas, count(t1.justificante) as justificadas, t2.maxFaltas as maximo_falas FROM faltas as t1, materias as t2 WHERE t1.materia = t2.idMateria AND t1.alumno = "+ matricula.toString() + " GROUP BY matricula, materia;";
+		ConcentradoFaltasVO [] faltas = null;
+		int registros, i = 0;
 		try{
 			ResultSet resultado = Conexion.getConexion().hacerConsulta().executeQuery(query);
+			/*ResultSetMetaData columnas = resultado.getMetaData();
+			while(true){
+				System.out.println(columnas.getColumnName(++i));
+			}*/
 			
-		}catch(Exception e){
-			return null;
-		}
-		return null;
+			resultado.last();
+			registros = resultado.getRow();
+			faltas = new ConcentradoFaltasVO [registros];
+			resultado.beforeFirst();
+			while(resultado.next()){
+				faltas[i] = new ConcentradoFaltasVO();
+				faltas[i].setIdMateria(resultado.getInt(3));
+				faltas[i].setMateria(resultado.getNString(2));
+				faltas[i].setMatricula(resultado.getInt(1));
+				faltas[i].setMaximoFaltas(resultado.getInt(6));
+				faltas[i].setNumeroFaltas(resultado.getInt(4));
+				faltas[i].setNumeroJustificadas(resultado.getInt(5));
+				faltas[i].setNoJustificadas(faltas[i].getNumeroFaltas().intValue() - faltas[i].getNumeroJustificadas().intValue());
+				i++;
+			}
+			System.out.println(faltas[0].getNumeroFaltas());
+		}catch(SQLException e){
+			System.out.println(e);
+			return faltas;
+		}/*catch(Exception e){
+			System.out.println(e);
+			return faltas;
+		}*/
+		return faltas;
 	}
 	
 	public FaltaVO[] consulta (FaltaVO falta){
-		FaltaVO[] faltas = null;
+		FaltaVO[] faltas = new FaltaVO[0];
+		boolean bandera = false;
 		String quiry = "SELECT * FROM faltas WHERE";
+		if(falta.getAlumno() != null){
+			quiry += " CAST(alumno AS CHAR) LIKE '" + falta.getAlumno() + "' AND";
+			bandera = true;
+		}
+		if(falta.getFecha() != null){
+			Date a = falta.getFecha();
+			quiry += " fecha = '" + a.getYear() + "-" + a.getMonth() + "-"+ a.getDay() +"' AND";
+			bandera = true;
+		}
+		if(falta.getIdFalta() != null){
+			quiry += " CAST(idFalta AS CHAR) LIKE '" + falta.getIdFalta() + "' AND";
+			bandera = true;
+		}
+		if(falta.getJustificante() != null){
+			quiry += " CAST(justificante AS CHAR) LIKE '" + falta.getJustificante() + "' AND";
+			bandera = true;
+		}
+		if(falta.getMateria() != null){
+			quiry += " CAST(materia AS CHAR) LIKE '" + falta.getMateria() + "' AND";
+			bandera = true;
+		}
+		
+		if(bandera){
+			quiry = quiry.substring(0, quiry.length()-4) + ";";
+		}
+		else{
+			quiry = quiry.substring(0, quiry.length()-7) + ";";
+		} 
+		System.out.println(quiry);
+		try{
+			faltas = this.recuperacion(Conexion.getConexion().hacerConsulta().executeQuery(quiry));
+			System.out.println(faltas);
+		}catch(SQLException e){
+			System.out.println(e);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return faltas;
 	}
 	
@@ -146,11 +210,12 @@ public class FaltaDAO {
 		Conexion.setInfo("root", "control", "chocolate4194", "127.0.0.1");
 		FaltaDAO acceso = new FaltaDAO();
 		FaltaVO consulta = new FaltaVO();
+		FaltaVO[] respuesta;
 		consulta.setAlumno(12030161);
-		consulta.setFecha(new Date (2014,9,20));
-		consulta.setIdFalta(12);
-		consulta.setJustificante(null);
-		consulta.setMateria(2);
-		acceso.insertar(consulta);
+		consulta.setMateria(5);
+		respuesta = acceso.consulta(consulta);
+		for(FaltaVO i: respuesta){
+			System.out.println(i);
+		}
 	}
 }

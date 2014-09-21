@@ -32,7 +32,7 @@ public class PanelConsultaFaltasMaestros extends JPanel{
 		String [] materias = new String [this.materias.length];
 		
 		int i=0;
-		for(MateriaVO m: this.materias){
+		for(MateriaVO m:  this.materias){
 			materias[i] = this.materias[i].getNombre();
 		}
 		

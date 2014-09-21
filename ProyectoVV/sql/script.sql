@@ -197,3 +197,13 @@ INSERT INTO alumnos (matricula, nombre, apellidoPaterno, apellidoMaterno, promed
 (11030163, "Julio", "Bustamante", "Espinoza", 8.5, 402),
 (11030164, "Andres", "Bustamante", "Espinoza", 8.5, 403),
 (10030162, "Geronimo", "Bustamante", "Espinoza", 8.5, 601);
+
+INSERT INTO documentos (idDocumentos, causa, fechaExpedicion, orientador) VALUES
+(214215789, 'Infestacion de piojos', '2014-09-22', 8);
+
+INSERT INTO justificantes (idJustificantes, fechaInicio, fechaFinal) VALUES
+(214215789, '2014-09-18', '2014-09-25');
+
+INSERT INTO faltas (alumno, materia, fecha, justificante) VALUES
+(12030162, 5, '2014-09-17', null),
+(12030162, 5, '2014-09-18', 214215789);
