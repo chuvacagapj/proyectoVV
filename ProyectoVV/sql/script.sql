@@ -63,16 +63,16 @@ CREATE TABLE respuestas
   siguiente   int,
   PRIMARY KEY (idRespuesta),
   FOREIGN KEY (siguiente  ) REFERENCES respuestas(idRespuesta) ON DELETE CASCADE,
-  FOREIGN KEY ( alumno    ) REFERENCES alumnos(matricula) ON DELETE CASCADE
+  FOREIGN KEY ( alumno    ) REFERENCES alumnos(matricula)      ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE materias
 (
-  idMaterias int         not null AUTO_INCREMENT,
+  idMateria int         not null AUTO_INCREMENT,
   nombre     varchar(40) not null,
   maxFaltas  int         not null,
   tipo       varchar(20) not null,
-  PRIMARY KEY (idMaterias)
+  PRIMARY KEY (idMateria)
 ) ENGINE = InnoDB;
 
 CREATE TABLE documentos
@@ -80,14 +80,16 @@ CREATE TABLE documentos
   idDocumentos    int  not null,
   causa           text not null,
   fechaExpedicion date not null,
-  PRIMARY KEY (idDocumentos)
+  orientador      int  not null,
+  PRIMARY KEY (idDocumentos),
+  FOREIGN KEY (orientador) REFERENCES maestros(idMaestros)
 ) ENGINE = InnoDB;
 
 CREATE TABLE justificantes
 (
   idJustificantes int      not null,
-  fechaInicio     datetime not null,
-  fechaFinal      datetime not null,
+  fechaInicio     date     not null,
+  fechaFinal      date     not null,
   PRIMARY KEY (idJustificantes),
   FOREIGN KEY (idJustificantes) REFERENCES documentos(idDocumentos) ON DELETE CASCADE
 ) ENGINE = InnoDB;
@@ -103,12 +105,15 @@ CREATE TABLE reportes
 
 CREATE TABLE faltas
 (
-  idFalta      int not null AUTO_INCREMENT,
-  hora datetime    not null,
-  cantidad     int not null,
+  idFalta      int  not null AUTO_INCREMENT,
+  alumno       int  not null,
+  materia      int  not null,
+  fecha        date not null,
   justificante int ,
   PRIMARY KEY (idFalta),
-  FOREIGN KEY (justificante) REFERENCES justificantes(idJustificantes) ON DELETE CASCADE
+  FOREIGN KEY (justificante) REFERENCES justificantes(idJustificantes) ON DELETE CASCADE,
+  FOREIGN KEY (alumno)       REFERENCES alumnos(matricula)             ON DELETE CASCADE,
+  FOREIGN KEY (materia)      REFERENCES materias(idMateria)            ON DELETE CASCADE 
 ) ENGINE = InnoDB;
 
 CREATE TABLE asignacion
@@ -120,16 +125,16 @@ CREATE TABLE asignacion
   CONSTRAINT asignacion_unica UNIQUE(maestro, materia, grupo),
   PRIMARY KEY (id),
   FOREIGN KEY (maestro) REFERENCES maestros(idMaestros) ON DELETE CASCADE,
-  FOREIGN KEY (materia) REFERENCES materias(idMaterias) ON DELETE CASCADE,
-  FOREIGN KEY (grupo)   REFERENCES grupos  (idGrupo) ON DELETE CASCADE
+  FOREIGN KEY (materia) REFERENCES materias(idMateria)  ON DELETE CASCADE,
+  FOREIGN KEY (grupo)   REFERENCES grupos  (idGrupo)    ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE documentos_alumnos
 (
-  alumno  int,
-  maestro int,
-  FOREIGN KEY (alumno)  REFERENCES alumnos (matricula) ON DELETE CASCADE,
-  FOREIGN KEY (maestro) REFERENCES maestros(idMaestros) ON DELETE CASCADE
+  alumno    int,
+  documento int,
+  FOREIGN KEY (alumno)    REFERENCES alumnos (matricula)      ON DELETE CASCADE,
+  FOREIGN KEY (documento) REFERENCES documentos(idDocumentos) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 -- Inicio de las variables de prueva

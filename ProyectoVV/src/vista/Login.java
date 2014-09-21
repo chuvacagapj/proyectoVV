@@ -9,19 +9,22 @@ import controlador.Iniciadora;
 import modelo.Conexion;
 
 public class Login extends JFrame implements ActionListener{
-	private JLabel usuarioEtiqueta, passwordEtiqueta;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JLabel usuarioEtiqueta, passwordEtiqueta, tipoUsuarioEtiqueta;
 	private JTextField usuarioCampo;
 	private JPasswordField passwordCampo;
 	private JButton entrarBoton;
 	private JComboBox tipoUsuario;
+	private JPanel imagenPanel, datosPanel;
 	
 	public Login (){
 		super("Login");
+		this.getContentPane().setLayout(new GridBagLayout());
 		
-		Container contenedor = this.getContentPane();
-		contenedor.setLayout(new FlowLayout());
 		
-		//this.tipoUsuario      = ne
 		this.usuarioEtiqueta  = new JLabel   ("Usuario");
 		this.passwordEtiqueta = new JLabel("contraseña");
 		this.usuarioCampo     = new JTextField      (20);

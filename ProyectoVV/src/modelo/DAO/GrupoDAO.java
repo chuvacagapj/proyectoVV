@@ -3,6 +3,7 @@ package modelo.DAO;
 import java.sql.*;
 
 import modelo.Conexion;
+import modelo.VO.GrupoVO;
 
 public class GrupoDAO {
 	
@@ -29,6 +30,28 @@ public class GrupoDAO {
 		}catch(Exception e){
 			System.out.println(e);
 		}
+		return grupos;
+	}
+	
+	public GrupoVO[] consultar (GrupoVO grupo){
+		String query      = "SELECT * FROM grupos WHERE";
+		Statement consulta = Conexion.getConexion().hacerConsulta();
+		boolean bandera   = false;
+		GrupoVO [] grupos = null;
+		if(grupo.getEnAutorizado() != null){}
+		if(grupo.getIdGrupo()      != null){}
+		if(grupo.getJefeGrupo()    != null){}
+		if(grupo.getMaxAlumnos()   != null){}
+		if(grupo.getOrientador()   != null){}
+		if(grupo.getTurno()        != null){}
+		
+		if(bandera){
+			query.substring(0, query.length()-4);
+		}else{
+			query.substring(0, query.length()-6);
+		}
+		query +=";";
+		System.out.println(query);
 		return grupos;
 	}
 }

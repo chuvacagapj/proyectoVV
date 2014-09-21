@@ -3,7 +3,6 @@ package vista;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +13,10 @@ import modelo.VO.AlumnoVO;
 import controlador.*;
 
 public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarCampos{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JLabel etiquetaMatricula, etiquetaApellidoPaterno, etiquetaApellidoMaterno, etiquetaGrupo, etiquetaLista, etiquetaAgregados, etiquetaNombre;
 	private JTextField cajaMatricula, cajaApellidoPaterno, cajaApellidoMaterno, cajaNombre;
 	private JComboBox <Integer> listaGrupo;
@@ -81,6 +84,14 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		
 		this.tablaAgreagados.setFillsViewportHeight(true);
 		this.tablaLista.setFillsViewportHeight     (true);
+		
+		this.etiquetaAgregados.setBorder      (BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaApellidoMaterno.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaApellidoPaterno.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaGrupo.setBorder          (BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaLista.setBorder          (BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaMatricula.setBorder      (BorderFactory.createEmptyBorder(0, 5, 0, 0));
+		this.etiquetaNombre.setBorder         (BorderFactory.createEmptyBorder(0, 5, 0, 0));
 		
 		GridBagConstraints posicion = new GridBagConstraints();
 		
