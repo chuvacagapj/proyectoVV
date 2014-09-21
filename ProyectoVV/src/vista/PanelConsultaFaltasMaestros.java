@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import controlador.Controlador;
+import modelo.VO.*;
 
 public class PanelConsultaFaltasMaestros extends JPanel{
 	
@@ -13,10 +14,12 @@ public class PanelConsultaFaltasMaestros extends JPanel{
 	private JComboBox   <String>  listaMateria, listaMes;
 	private JTable      tabla;
 	private JScrollPane barraTabla;
-	private Controlador  control;
+	private Controlador control;
+	private MateriaVO[] materias;
 	
 	public PanelConsultaFaltasMaestros(Controlador control){
-		this.control = control;
+		this.control  = control;
+		this.materias = control.getMaterias();
 		
 		this.setLayout(new GridBagLayout());
 		
@@ -25,7 +28,17 @@ public class PanelConsultaFaltasMaestros extends JPanel{
 		this.etiquetaMateria = new JLabel("Materia:");
 		this.etiquetaMes     = new JLabel("Mes:");
 		
-		this.listaGrupo = new JComboBox <Integer> (control.getGrupos());
+		String [] meses    = {null, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
+		String [] materias = new String [this.materias.length];
+		
+		int i=0;
+		for(MateriaVO m: this.materias){
+			materias[i] = this.materias[i].getNombre();
+		}
+		
+		this.listaGrupo   = new JComboBox <Integer> (control.getGrupos());
+		this.listaMes     = new JComboBox <String>  (meses);
+		this.listaMateria = new JComboBox <String>  (materias);
 		
 	}
 
@@ -35,7 +48,7 @@ public class PanelConsultaFaltasMaestros extends JPanel{
 	}
 	
 	public static void main(String[] args) {
-		Principal vista = new Principal(new PanelConsultaFaltasMaestros());
+		Principal vista = new Principal(new PanelConsultaFaltasMaestros(new Controlador()));
 		vista.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		vista.setSize(500, 500);
 		vista.setVisible(true);

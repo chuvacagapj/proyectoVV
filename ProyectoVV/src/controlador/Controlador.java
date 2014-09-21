@@ -3,9 +3,8 @@ package controlador;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import modelo.DAO.AlumnoDAO;
-import modelo.DAO.GrupoDAO;
-import modelo.VO.AlumnoVO;
+import modelo.DAO.*;
+import modelo.VO.*;
 
 public class Controlador {
 	//vistas
@@ -28,6 +27,10 @@ public class Controlador {
 		}
 	}
 
+	public MateriaVO[] getMaterias(){
+		return null;
+	}
+	
 	public JDialog getBuscarAlumnos() {
 		return buscarAlumnos;
 	}
