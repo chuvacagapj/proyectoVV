@@ -12,9 +12,22 @@ public class Controlador {
 	private JFrame  Login;
 	
 	//DAO
-	private AlumnoDAO alumnos;
-	private GrupoDAO  grupos;
-	private FaltaDAO  faltas;
+	private AlumnoDAO  alumnos;
+	private GrupoDAO   grupos;
+	private FaltaDAO   faltas;
+	private MateriaDAO materias;
+	
+	public MateriaDAO getMaterias() {
+		return materias;
+	}
+
+	public void setMaterias(MateriaDAO materias) {
+		this.materias = materias;
+	}
+	
+	public FaltaVO[] getFalta(Integer grupo, Integer materia, Integer mes){
+		return this.faltas.faltasConsultaMaestros(mes, grupo, materia);
+	}
 	
 	public FaltaVO[] getFalta(FaltaVO entrada){
 		return this.faltas.consulta(entrada);
@@ -40,8 +53,8 @@ public class Controlador {
 		}
 	}
 
-	public MateriaVO[] getMaterias(){
-		return null;
+	public MateriaVO[] getMaterias(int grupo){
+		return materias.gruposMaestrosMaterias(grupo, null);
 	}
 	
 	public JDialog getBuscarAlumnos() {

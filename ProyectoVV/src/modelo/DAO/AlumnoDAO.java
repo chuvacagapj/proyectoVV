@@ -181,7 +181,7 @@ public class AlumnoDAO {
 		return a;
 	}
 	
-	protected AlumnoVO[] recuperacion (ResultSet info) throws Exception{
+	protected AlumnoVO[] recuperacion (ResultSet info) throws SQLException{
 		int registros = 0, i;	
 		info.last();
 		registros = info.getRow();
@@ -202,6 +202,7 @@ public class AlumnoDAO {
 			a[i].setPromedio(info.getFloat("promedio"));
 			i++;
 		}
+		info.close();
 		return a;
 	}
 

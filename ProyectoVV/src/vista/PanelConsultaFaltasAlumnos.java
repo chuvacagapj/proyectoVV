@@ -145,7 +145,6 @@ public class PanelConsultaFaltasAlumnos extends JPanel implements ActionListener
 				posicion.fill       = GridBagConstraints.BOTH;
 				this.add(this.barraTabla, posicion);
 				this.revalidate();
-				this.revalidate();
 				this.repaint();
 			}else{
 				this.verMas.setText("Ver mas");
@@ -160,7 +159,8 @@ public class PanelConsultaFaltasAlumnos extends JPanel implements ActionListener
 					if(i != null){
 						String[] fila = new  String[2];
 						fila[0] = i.getFecha().toString();
-						if(i.getJustificante() == null){
+						System.out.println(i.getJustificante().toString());
+						if(i.getJustificante().intValue() == 0){
 							fila[1] = "No";
 						}else{
 							fila[1] = "Si";
