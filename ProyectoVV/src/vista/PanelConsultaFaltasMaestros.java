@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.*;
@@ -36,6 +38,11 @@ public class PanelConsultaFaltasMaestros extends JPanel implements ActionListene
 		GridBagConstraints posicion = new GridBagConstraints();
 		
 		this.setLayout(new GridBagLayout());
+		
+		this.modelo     = new BloqueadorTablas(null, null);
+		this.tabla      = new JTable(this.modelo);
+		this.barraTabla = new JScrollPane(this.tabla);
+		this.tabla.setFillsViewportHeight(true);
 		
 		this.etiquetaGrupo   = new JLabel("Grupo:");
 		this.etiquetaLista   = new JLabel("Lista:");
@@ -81,6 +88,24 @@ public class PanelConsultaFaltasMaestros extends JPanel implements ActionListene
 		posicion.anchor     = GridBagConstraints.WEST;
 		posicion.fill       = GridBagConstraints.HORIZONTAL;
 		this.add(listaGrupo, posicion);
+		
+		posicion.gridx      = 0;
+		posicion.gridy      = 2;
+		posicion.gridwidth  = 1;
+		posicion.gridheight = 1;
+		posicion.weightx    = 1.0;
+		posicion.anchor     = GridBagConstraints.WEST;
+		posicion.fill       = GridBagConstraints.NONE;
+		this.add(this.etiquetaLista, posicion);
+		
+		posicion.gridx      = 0;
+		posicion.gridy      = 3;
+		posicion.gridwidth  = 3;
+		posicion.gridheight = 1;
+		posicion.weightx    = 1.0;
+		posicion.weighty    = 1.0;
+		posicion.fill       = GridBagConstraints.BOTH;
+		this.add(this.barraTabla, posicion);
 	}
 
 	@Override
@@ -124,35 +149,42 @@ public class PanelConsultaFaltasMaestros extends JPanel implements ActionListene
 			
 		}
 		else if (e.getSource() == this.listaGrupo){
-			this.materias = control.getMaterias((Integer)this.listaGrupo.getSelectedItem());
-			String[] materias = new String[this.materias.length + 1];
-			materias[0] = "";
-			for(int i = 0; i < this.materias.length; i++){
-				materias[i+1] = this.materias[i].getNombre();
+			if(this.listaGrupo.getSelectedIndex() != 0){
+				AlumnoVO a = new AlumnoVO();
+				a.setGrupo((Integer)this.listaGrupo.getSelectedItem());
+				this.materias = control.getMaterias((Integer)this.listaGrupo.getSelectedItem());
+				this.alumnos = new ArrayList <AlumnoVO> (Arrays.asList(this.control.getAlumnos(a)));
+				String[] materias = new String[this.materias.length + 1];
+				materias[0] = "";
+				for(int i = 0; i < this.materias.length; i++){
+					materias[i+1] = this.materias[i].getNombre();
+				}
+			
+				this.listaMateria = new JComboBox <String> (materias);
+				this.listaMateria.addActionListener(this);
+				GridBagConstraints posicion = new GridBagConstraints();
+			
+				posicion.gridx      = 2;
+				posicion.gridy      = 0;
+				posicion.gridwidth  = 1;
+				posicion.gridheight = 1;
+				posicion.weightx    = 1.0;
+				this.add(this.etiquetaMateria, posicion);
+			
+				posicion.gridx      = 2;
+				posicion.gridy      = 1;
+				posicion.gridwidth  = 1;
+				posicion.gridheight = 1;
+				posicion.weightx    = 1.0;
+				posicion.fill       = GridBagConstraints.HORIZONTAL;
+				this.add(this.listaMateria, posicion);
+				this.revalidate();
+				this.repaint();
+				this.actualizar();
 			}
-			
-			this.listaMateria = new JComboBox <String> (materias);
-			GridBagConstraints posicion = new GridBagConstraints();
-			
-			posicion.gridx      = 2;
-			posicion.gridy      = 0;
-			posicion.gridwidth  = 1;
-			posicion.gridheight = 1;
-			posicion.weightx    = 1.0;
-			this.add(this.etiquetaMateria, posicion);
-			
-			posicion.gridx      = 2;
-			posicion.gridy      = 1;
-			posicion.gridwidth  = 1;
-			posicion.gridheight = 1;
-			posicion.weightx    = 1.0;
-			posicion.fill       = GridBagConstraints.HORIZONTAL;
-			this.add(this.listaMateria, posicion);
-			this.revalidate();
-			this.repaint();
-			this.actualizar();
-			
-		} else if(e.getSource() == this.listaMateria){
+		}
+		if(e.getSource() == this.listaMateria){
+			System.out.println("Entra a listaMateria");
 			int i = this.listaGrupo.getSelectedIndex();
 			if(0 < i){
 				this.faltas = control.getFalta((Integer)this.listaGrupo.getSelectedItem(), this.materias[this.listaMateria.getSelectedIndex()-1].getIdMaterias(), this.listaMes.getSelectedIndex());
@@ -172,8 +204,12 @@ public class PanelConsultaFaltasMaestros extends JPanel implements ActionListene
 			titulo[0] = "Matricula";
 			titulo[1] = "Nombre";
 			
+			while(this.modelo.getRowCount() > 0){
+				this.modelo.removeRow(0);
+			}
+			
 			for(i = 2; i < this.dias + 2; i++){
-				titulo[i] = Integer.toString(i);
+				titulo[i] = Integer.toString(i-1);
 			}
 			
 			for(i = 0;i < alumnos.length ;i++){
@@ -181,36 +217,19 @@ public class PanelConsultaFaltasMaestros extends JPanel implements ActionListene
 				contenido[i][1] = alumnos[i].getApellidoPaterno() + " " + alumnos[i].getApellidoMaterno() + " " + alumnos[i].getNombre();
 			}
 			
-			this.modelo =  new BloqueadorTablas(contenido, titulo);
+			this.modelo.setDataVector(contenido, titulo);
 			
 			for(FaltaVO j: this.faltas){
 				AlumnoVO a = new AlumnoVO();
 				a.setMatricula(j.getAlumno());
 				y = this.alumnos.indexOf(a);
-				x = j.getFecha().getDay();
+				x = j.getFecha().getDate();
 				if(j.getJustificante() == 0){
-					this.modelo.setValueAt("F", x + 2, y);
+					this.modelo.setValueAt("F", y, x + 1);
 				}else{
-					this.modelo.setValueAt("J", x + 2, y);
+					this.modelo.setValueAt("J", y, x + 1);
 				}
 			}
-			
-			this.tabla = new JTable(this.modelo);
-			this.barraTabla = new JScrollPane(this.tabla);
-			
-		    GridBagConstraints posicion = new GridBagConstraints();
-		    
-		    posicion.gridx      = 0;
-		    posicion.gridy      = 2;
-		    posicion.gridwidth  = 1;
-		    posicion.gridheight = 1;
-		    this.add(this.etiquetaLista, posicion);
-		    
-		    posicion.gridx      = 0;
-		    posicion.gridy      = 3;
-		    posicion.gridwidth  = 3;
-		    posicion.gridheight = 1;
-		    this.add(this.barraTabla, posicion);
 		    
 		    this.revalidate();
 		    this.repaint();

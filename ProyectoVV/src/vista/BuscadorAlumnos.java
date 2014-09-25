@@ -74,8 +74,6 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		this.botonSeleccion.addActionListener    (this);
 		this.botonSeleccionTodo.addActionListener(this);
 		
-		this.botonBorrarTodo.setSize(100, 100);
-		
 		this.tablaAgreagados = new JTable(this.modeloAgregados);
 		this.tablaLista      = new JTable(this.modeloLista    );
 		
