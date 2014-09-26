@@ -11,6 +11,12 @@ public class AlumnoVO {
   private Float   promedio;
   private Integer grupo;
   
+  public AlumnoVO(){}
+  
+  public AlumnoVO(Integer matricula){
+	  this.matricula = matricula;
+  }
+  
   public Integer getMatricula() {
     return matricula;
   }

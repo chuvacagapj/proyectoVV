@@ -1,5 +1,7 @@
 package controlador;
 
+import java.util.Date;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -23,6 +25,11 @@ public class Controlador {
 
 	public void setMaterias(MateriaDAO materias) {
 		this.materias = materias;
+	}
+	
+	public FaltaVO[] getFalta(Integer grupo, Integer materia, Integer day, Integer month){
+		Date a = new Date();
+		return this.faltas.faltasConsultaMaestros(a.getYear(), month, day, grupo, materia);
 	}
 	
 	public FaltaVO[] getFalta(Integer grupo, Integer materia, Integer mes){

@@ -162,10 +162,14 @@ public class FaltaDAO {
 	
 	public FaltaVO[] faltasConsultaMaestros(Integer year, Integer month, Integer day, Integer grupo, Integer materia){
 		FaltaVO[] faltas =  null;
-		String query = "SELECT * FROM faltas WHERE fecha '"+ year + "-" + month+ "-" + day + "' AND materia = " + materia + " AND alumno IN (SELECT matricula FROM alumnos WHERE grupo = " + grupo + ");";
+		String query = "SELECT * FROM faltas WHERE fecha = '"+ year + "-" + month+ "-" + day + "' AND materia = " + materia + " AND alumno IN (SELECT matricula FROM alumnos WHERE grupo = " + grupo + ");";
 		try{
 			faltas = this.recuperacion(Conexion.getConexion().hacerConsulta().executeQuery(query));
-		}catch(Exception e){
+		}catch(SQLException e){
+			System.out.println(e);
+			faltas = null;
+		}
+		catch(Exception e){
 			faltas = null;
 		}
 		return faltas;
@@ -205,15 +209,11 @@ public class FaltaDAO {
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 		Conexion.setInfo("root", "control", "chocolate4194", "127.0.0.1");
 		FaltaDAO acceso = new FaltaDAO();
-		FaltaVO consulta = new FaltaVO();
 		FaltaVO[] respuesta;
-		consulta.setAlumno(12030161);
-		consulta.setMateria(5);
-		respuesta = acceso.consulta(consulta);
+		respuesta = acceso.faltasConsultaMaestros(2014, 9, 17, 201, 5);
 		for(FaltaVO i: respuesta){
 			System.out.println(i);
 		}
