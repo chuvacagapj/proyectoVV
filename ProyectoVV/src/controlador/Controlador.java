@@ -1,5 +1,6 @@
 package controlador;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JDialog;
@@ -28,8 +29,9 @@ public class Controlador {
 	}
 	
 	public FaltaVO[] getFalta(Integer grupo, Integer materia, Integer day, Integer month){
-		Date a = new Date();
-		return this.faltas.faltasConsultaMaestros(a.getYear(), month, day, grupo, materia);
+		Calendar a = Calendar.getInstance();
+		System.out.print(a.get(Calendar.YEAR));
+		return this.faltas.faltasConsultaMaestros(a.get(Calendar.YEAR), month, day, grupo, materia);
 	}
 	
 	public FaltaVO[] getFalta(Integer grupo, Integer materia, Integer mes){
@@ -38,6 +40,14 @@ public class Controlador {
 	
 	public FaltaVO[] getFalta(FaltaVO entrada){
 		return this.faltas.consulta(entrada);
+	}
+	
+	public void InsertarFalta(FaltaVO entrada){
+		this.faltas.insertar(entrada);
+	}
+	
+	public void eliminarFalta(FaltaVO entrada){
+		this.faltas.eliminar(entrada.getIdFalta());
 	}
 	
 	public FaltaDAO getFaltas() {

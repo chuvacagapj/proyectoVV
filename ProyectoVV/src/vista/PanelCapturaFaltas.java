@@ -234,7 +234,27 @@ public class PanelCapturaFaltas extends JPanel implements ActionListener{
 		} else if((e.getSource() == this.listaDia && this.listaDia.getSelectedIndex() != 0)||(e.getSource() == this.listaMateria && this.listaMateria.getSelectedIndex() != 0)){
 			actualizar();
 		} else if(e.getSource() == this.guardar){
-			
+			System.out.println("Boton guardar!");
+			System.out.println(entrada);
+			for(int i=0; i < this.entrada.length; i++){
+				boolean v = (Boolean)this.modelo.getValueAt(i, 2);
+				System.out.println(v);
+				if(entrada[i] && !v){
+					this.control.eliminarFalta(this.faltas[i]);
+				}
+				
+				else if(!entrada[i] && v){
+					FaltaVO falta = new FaltaVO();
+					Date fecha = new Date();
+					fecha.setMonth(this.listaMes.getSelectedIndex());
+					fecha.setDate(this.listaDia.getSelectedIndex());
+					falta.setAlumno(this.alumnos.get(i).getMatricula());
+					falta.setFecha(fecha);
+					falta.setMateria(this.materias[this.listaMateria.getSelectedIndex()-1].getIdMaterias());
+					this.control.InsertarFalta(falta);
+					
+				}
+			}
 		}else this.borrarTabla();
 		
 	}
@@ -244,8 +264,10 @@ public class PanelCapturaFaltas extends JPanel implements ActionListener{
 		if(this.listaDia.getSelectedIndex() > 0 && this.listaGrupo.getSelectedIndex() > 0 && this.listaMateria.getSelectedIndex() > 0 && this.listaMes.getSelectedIndex() > 0){
 			
 			this.faltas = this.control.getFalta((Integer)this.listaGrupo.getSelectedItem(), this.materias[this.listaMateria.getSelectedIndex()-1].getIdMaterias(), (Integer)this.listaDia.getSelectedItem(), this.listaMes.getSelectedIndex());
+			System.out.println(this.faltas.length);
 			int numero = this.alumnos.size();
 			this.entrada = new Boolean[numero];
+			System.out.println(entrada != null);
 			
 			for(FaltaVO i: this.faltas){
 				numero = this.alumnos.indexOf(new AlumnoVO(i.getAlumno()));

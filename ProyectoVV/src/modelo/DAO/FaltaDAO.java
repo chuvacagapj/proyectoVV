@@ -161,6 +161,7 @@ public class FaltaDAO {
 	}
 	
 	public FaltaVO[] faltasConsultaMaestros(Integer year, Integer month, Integer day, Integer grupo, Integer materia){
+		System.out.println(year + " " + month + " " + day + " " + grupo + " " + materia);
 		FaltaVO[] faltas =  null;
 		String query = "SELECT * FROM faltas WHERE fecha = '"+ year + "-" + month+ "-" + day + "' AND materia = " + materia + " AND alumno IN (SELECT matricula FROM alumnos WHERE grupo = " + grupo + ");";
 		try{
@@ -215,7 +216,7 @@ public class FaltaDAO {
 		FaltaVO[] respuesta;
 		respuesta = acceso.faltasConsultaMaestros(2014, 9, 17, 201, 5);
 		for(FaltaVO i: respuesta){
-			System.out.println(i);
+			System.out.println(i.getAlumno());
 		}
 	}
 }

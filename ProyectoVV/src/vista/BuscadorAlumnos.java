@@ -29,6 +29,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 	private AlumnoVO[] respuesta;
 	private ArrayList <AlumnoVO> envio;
 	
+	@SuppressWarnings("deprecation")
 	public BuscadorAlumnos(JFrame parent, boolean modal, Controlador control){
 		super(parent,"Buscar Alumnos!", modal); //configurar ventana
 		this.setSize(500, 500);
@@ -131,30 +132,35 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.gridheight = 1;
 		posicion.weightx    = 1.0;
 		posicion.fill       = GridBagConstraints.HORIZONTAL;
+		this.cajaMatricula.setNextFocusableComponent(this.cajaApellidoPaterno);
 		this.getContentPane().add(this.cajaMatricula, posicion);
 		
 		posicion.gridx      = 1;
 		posicion.gridy      = 1;
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
+		this.cajaApellidoPaterno.setNextFocusableComponent(this.cajaApellidoMaterno);
 		this.getContentPane().add(this.cajaApellidoPaterno, posicion);
 		
 		posicion.gridx      = 1;
 		posicion.gridy      = 2;
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
+		this.cajaApellidoMaterno.setNextFocusableComponent(this.cajaNombre);
 		this.getContentPane().add(this.cajaApellidoMaterno, posicion);
 		
 		posicion.gridx      = 1;
 		posicion.gridy      = 3;
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
+		this.cajaNombre.setNextFocusableComponent(this.listaGrupo);
 		this.getContentPane().add(this.cajaNombre, posicion);
 		
 		posicion.gridx      = 1;
 		posicion.gridy      = 4;
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
+		this.listaGrupo.setNextFocusableComponent(this.botonSeleccion);
 		this.getContentPane().add(this.listaGrupo, posicion);
 		
 		posicion.gridx      = 0;
@@ -179,6 +185,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.weighty    = 0.0;
 		posicion.fill       = GridBagConstraints.HORIZONTAL;
 		posicion.anchor     = GridBagConstraints.NORTHWEST;
+		this.botonSeleccion.setNextFocusableComponent(this.botonSeleccionTodo);
 		this.getContentPane().add(this.botonSeleccion, posicion);
 		
 		posicion.gridx      = 2;
@@ -186,6 +193,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
 		posicion.weighty    = 1.0;
+		this.botonSeleccionTodo.setNextFocusableComponent(this.botonBorrar);
 		this.getContentPane().add(this.botonSeleccionTodo, posicion);
 		
 		posicion.gridx      = 0;
@@ -196,6 +204,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.weightx    = 0.0;
 		posicion.fill       = GridBagConstraints.NONE;
 		posicion.anchor     = GridBagConstraints.WEST;
+		
 		this.getContentPane().add(this.etiquetaAgregados, posicion);
 		
 		posicion.gridx      = 0;
@@ -215,6 +224,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.weighty    = 0.0;
 		posicion.fill       = GridBagConstraints.HORIZONTAL;
 		posicion.anchor     = GridBagConstraints.NORTHWEST;
+		this.botonBorrar.setNextFocusableComponent(this.botonBorrarTodo);
 		this.getContentPane().add(this.botonBorrar, posicion);
 		
 		posicion.gridx      = 2;
@@ -222,6 +232,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.gridwidth  = 1;
 		posicion.gridheight = 1;
 		posicion.weighty    = 1.0;
+		this.botonBorrarTodo.setNextFocusableComponent(this.botonAceptar);
 		this.getContentPane().add(this.botonBorrarTodo, posicion);
 		
 		posicion.gridx      = 1;
@@ -232,6 +243,7 @@ public class BuscadorAlumnos extends JDialog implements ActionListener, EscudarC
 		posicion.weighty    = 0.0;
 		posicion.fill       = GridBagConstraints.NONE;
 		posicion.anchor     = GridBagConstraints.CENTER;
+		this.botonAceptar.setNextFocusableComponent(this.cajaMatricula);
 		this.getContentPane().add(this.botonAceptar, posicion);
 
 	}
